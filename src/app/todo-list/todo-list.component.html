@@ -1,0 +1,64 @@
+<div class="container">
+  <!-- Logo de la aplicación -->
+  <div class="header">
+    <img src="logo_iris.png" alt="Logo" class="logo" />
+  </div>
+
+  <h2>To do List</h2>
+
+  <!-- Botón para cerrar sesión -->
+  <div class="logout-container">
+    <a (click)="logout()" class="logout-link">Cerrar sesión</a>
+  </div>
+
+  <!-- Filtro para las tareas -->
+  <div class="filter">
+    <select (change)="onFilterChange($event)">
+      <option value="all">All</option>
+      <option value="completed">Completed</option>
+      <option value="pending">Pending</option>
+    </select>
+  </div>
+
+  <!-- Campo para agregar nueva tarea -->
+  <div class="add-task">
+    <input type="text" [(ngModel)]="newTask" placeholder="Agregar nueva tarea" />
+    <button (click)="addTask()">+</button>
+  </div>
+
+  <h3>Todas las tareas</h3>
+
+  <!-- Lista de tareas filtradas -->
+  <ul >
+    <li *ngFor="let task of filteredTasks" class="task-item">
+      <input type="checkbox" [checked]="task.completed" (change)="saveTask(task)" />
+      <span class="text" [ngClass]="{ completed: task.completed }" (click)="openModal(task)">
+        {{ task.name }}
+      </span>
+      <button (click)="deleteTask(task)" class="delete">x</button>
+    </li>
+  </ul>
+</div>
+
+<!-- Modal para editar la tarea -->
+<div *ngIf="selectedTask" class="modal-container" [ngClass]="{'show-modal': selectedTask}">
+  <div class="modal-content">
+    <h3>Editar Tarea</h3>
+
+    <label>Nombre:</label>
+    <input type="text" [(ngModel)]="selectedTask.name" />
+
+    <label>Descripción:</label>
+    <textarea [(ngModel)]="selectedTask.description" placeholder="Agregar descripción"></textarea>
+
+    <!-- Muestra el mensaje de error aquí -->
+    <div *ngIf="errorMessage" class="error-message">
+      {{ errorMessage }}
+    </div>
+
+    <div class="modal-actions">
+      <button (click)="saveTaskChanges()">Guardar</button>
+      <button (click)="closeModal()">Cancelar</button>
+    </div>
+  </div>
+</div>

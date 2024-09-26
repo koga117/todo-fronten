@@ -1,0 +1,27 @@
+<div class="container">
+  <!-- Logo de la aplicación -->
+  <div class="header">
+    <img src="logo_iris.png" alt="Logo" class="logo" />
+  </div>
+  <h2>Iniciar Sesión</h2>
+
+  <form (ngSubmit)="login()">
+    <div class="form-group">
+      <label for="username">Usuario</label>
+      <input type="text" id="username" [(ngModel)]="user.username" name="username" required />
+    </div>
+
+    <div class="form-group">
+      <label for="password">Contraseña</label>
+      <input type="password" id="password" [(ngModel)]="user.password" name="password" required />
+    </div>
+
+    <!-- Muestra el mensaje de error aquí -->
+    <div *ngIf="errorMessage" class="error-message">
+      {{ errorMessage }}
+    </div>
+
+    <button type="submit" class="btn login-btn">Iniciar Sesión</button>
+    <p>No tienes una cuenta? <a routerLink="/register">Regístrate aquí</a></p>
+  </form>
+</div>

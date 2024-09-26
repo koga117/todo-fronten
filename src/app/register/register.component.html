@@ -1,0 +1,94 @@
+import { ComponentFixture, TestBed } from '@angular/core/testing';
+import { RegisterComponent } from './register.component';
+import { FormsModule } from '@angular/forms';
+import { HttpClientTestingModule } from '@angular/common/http/testing';
+import { RouterTestingModule } from '@angular/router/testing'; // Importa RouterTestingModule
+import { ToastrService } from 'ngx-toastr';
+import { of, throwError } from 'rxjs';
+import { By } from '@angular/platform-browser';
+
+describe('RegisterComponent', () => {
+  let component: RegisterComponent;
+  let fixture: ComponentFixture<RegisterComponent>;
+  let mockAuthService: any;
+  let toastrService: jasmine.SpyObj<ToastrService>;
+
+  beforeEach(async () => {
+    // Mock del servicio AuthService
+    mockAuthService = jasmine.createSpyObj('AuthService', ['register']);
+    
+    // Configuración del ToastrService
+    toastrService = jasmine.createSpyObj('ToastrService', ['success', 'error']);
+
+    await TestBed.configureTestingModule({
+      imports: [
+        FormsModule,
+        HttpClientTestingModule,
+        RouterTestingModule // Asegúrate de que esto esté aquí
+      ],
+      declarations: [RegisterComponent],
+      providers: [
+        { provide: ToastrService, useValue: toastrService },
+        { provide: AuthService, useValue: mockAuthService } // Mock del AuthService
+      ]
+    }).compileComponents();
+  });
+
+  beforeEach(() => {
+    fixture = TestBed.createComponent(RegisterComponent);
+    component = fixture.componentInstance;
+    fixture.detectChanges();
+  });
+
+  it('should create', () => {
+    expect(component).toBeTruthy();
+  });
+
+  it('should call register method and navigate on successful registration', () => {
+    // Mock de la respuesta del servicio
+    mockAuthService.register.and.returnValue(of({})); // Respuesta exitosa simulada
+
+    component.user = { username: 'testuser', password: 'password' };
+    spyOn(component.router, 'navigate'); // Espía en el método navigate del router
+
+    component.onRegister(); // Llama al método onRegister
+
+    expect(mockAuthService.register).toHaveBeenCalledWith(component.user); // Verifica que se haya llamado al método de registro
+    expect(toastrService.success).toHaveBeenCalledWith('Usuario registrado exitosamente'); // Verifica que se haya llamado al toastr
+    expect(component.router.navigate).toHaveBeenCalledWith(['/login']); // Verifica la navegación
+  });
+
+  it('should show error message on registration failure', () => {
+    // Simula un error en el servicio
+    mockAuthService.register.and.returnValue(throwError(() => new Error('Error al registrar')));
+
+    component.user = { username: 'testuser', password: 'password' };
+
+    component.onRegister(); // Llama al método onRegister
+
+    expect(toastrService.error).toHaveBeenCalledWith('Error al registrar el usuario'); // Verifica que se haya mostrado el mensaje de error
+  });
+
+  it('should not submit if form is invalid', () => {
+    component.user = { username: '', password: '' }; // Datos inválidos
+
+    spyOn(mockAuthService, 'register'); // Espía en el método de registro
+
+    component.onRegister(); // Llama al método onRegister
+
+    expect(mockAuthService.register).not.toHaveBeenCalled(); // Verifica que no se haya llamado al método de registro
+  });
+
+  it('should correctly bind user input', () => {
+    const usernameInput = fixture.debugElement.query(By.css('#username')).nativeElement;
+    const passwordInput = fixture.debugElement.query(By.css('#password')).nativeElement;
+
+    usernameInput.value = 'newuser';
+    passwordInput.value = 'newpassword';
+    usernameInput.dispatchEvent(new Event('input'));
+    passwordInput.dispatchEvent(new Event('input'));
+
+    expect(component.user.username).toBe('newuser');
+    expect(component.user.password).toBe('newpassword');
+  });
+});
