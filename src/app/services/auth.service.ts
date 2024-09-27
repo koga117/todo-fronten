@@ -4,6 +4,7 @@ import { HttpClient } from '@angular/common/http';
 import { Observable, throwError } from 'rxjs';
 import { ToastrService } from 'ngx-toastr';
 import { catchError, tap } from 'rxjs/operators';
+import { environment } from '../../environments/environment';
 
 export interface User {
     username: string;
@@ -14,8 +15,9 @@ export interface User {
     providedIn: 'root'
 })
 export class AuthService {
-    private registerUrl = 'http://localhost:3000/register';
-    private loginUrl = 'http://localhost:3000/login';
+    private apiUrl = environment.apiUrl
+    private registerUrl = `${this.apiUrl}register`;
+    private loginUrl = `${this.apiUrl}login`;
 
     constructor(private http: HttpClient, private toastr: ToastrService) { }
 

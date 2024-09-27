@@ -11,7 +11,7 @@ export const authInterceptor: HttpInterceptorFn = (req, next) => {
   if (token && !isExcludedUrl) {
     const clonedRequest = req.clone({
       setHeaders: {
-        Authorization: `Bearer ${token}` // Asegúrate de agregar "Bearer "
+        Authorization: `${token}` // Asegúrate de agregar "Bearer "
       }
     });
     return next(clonedRequest);
