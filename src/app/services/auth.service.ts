@@ -15,7 +15,7 @@ export interface User {
     providedIn: 'root'
 })
 export class AuthService {
-    private apiUrl = environment.apiUrl
+    private apiUrl = environment.apiUrl;
     private registerUrl = `${this.apiUrl}register`;
     private loginUrl = `${this.apiUrl}login`;
 
@@ -27,20 +27,28 @@ export class AuthService {
                 this.toastr.success('Usuario registrado exitosamente');
             }),
             catchError(error => {
-                this.toastr.error('Error al registrar el usuario');
+                const errorMsg = error?.error?.message || 'Error al registrar el usuario';
+                this.toastr.error(errorMsg);
                 return throwError(error);
             })
         );
     }
 
     login(user: User): Observable<any> {
-        console.log(user)
         return this.http.post(this.loginUrl, user).pipe(
-            tap(() => {
-                this.toastr.success('Inicio de sesión exitoso');
+            tap((response: any) => {
+                const { token, userId } = response;
+                if (token && userId) {
+                    localStorage.setItem('token', token);
+                    localStorage.setItem('userId', userId);
+                    this.toastr.success('Inicio de sesión exitoso');
+                } else {
+                    this.toastr.error('No se recibió un token o userId de autenticación');
+                }
             }),
             catchError(error => {
-                this.toastr.error('Error en inicio de sesión');
+                const errorMsg = error?.error?.message || 'Error en inicio de sesión';
+                this.toastr.error(errorMsg);
                 return throwError(error);
             })
         );
@@ -52,4 +60,8 @@ export class AuthService {
         return token !== null;
     }
 
+    // Método para obtener el userId del usuario autenticado
+    getUserId(): string | null {
+        return localStorage.getItem('userId');
+    }
 }

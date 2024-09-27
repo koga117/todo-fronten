@@ -1,5 +1,5 @@
 import { Injectable } from '@angular/core';
-import { HttpClient } from '@angular/common/http';
+import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { Observable } from 'rxjs';
 import { environment } from '../../environments/environment'; 
 
@@ -8,6 +8,7 @@ export interface Todo {
     name: string;
     completed: boolean;
     description?: string;
+    userId?: string;
 }
 
 export interface CreateTodoResponse {
@@ -25,18 +26,21 @@ export class TodoService {
     constructor(private http: HttpClient) {}
 
     createTodo(todo: Todo): Observable<CreateTodoResponse> {
-        return this.http.post<CreateTodoResponse>(this.apiUrl, todo);
+        const userId = localStorage.getItem('userId');
+        return this.http.post<CreateTodoResponse>(this.apiUrl, { ...todo, userId });
     }
 
-    getTodos(): Observable<Todo[]> {
-        return this.http.get<Todo[]>(this.apiUrl);
+    getTodosByUserId(userId: string): Observable<Todo[]> {
+        return this.http.get<Todo[]>(`${this.apiUrl}?userId=${userId}`);
     }
 
     updateTodo(id: string, todo: Todo): Observable<Todo> {
-        return this.http.put<Todo>(`${this.apiUrl}/${id}`, todo);
+        const userId = localStorage.getItem('userId');
+        return this.http.put<Todo>(`${this.apiUrl}/${id}`, { ...todo, userId });
     }
 
     deleteTodo(id: string): Observable<void> {
-        return this.http.delete<void>(`${this.apiUrl}/${id}`);
+        const userId = localStorage.getItem('userId');
+        return this.http.delete<void>(`${this.apiUrl}/${id}?userId=${userId}`);
     }
 }

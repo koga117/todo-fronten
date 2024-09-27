@@ -1,4 +1,4 @@
-import { Component, OnInit, ChangeDetectorRef  } from '@angular/core';
+import { Component, OnInit, ChangeDetectorRef } from '@angular/core';
 import { ToastrService } from 'ngx-toastr';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
@@ -20,6 +20,7 @@ export class TodoListComponent implements OnInit {
   selectedTask: Todo | null = null;
   filterValue: string = 'all';
   errorMessage: string = '';
+  userId: string | null = null;
 
   constructor(
     private todoService: TodoService,
@@ -30,19 +31,26 @@ export class TodoListComponent implements OnInit {
   ) { }
 
   ngOnInit() {
-    this.loadTasks();
+    this.userId = this.authService.getUserId();
+    if (this.userId) {
+      this.loadTasks();
+    } else {
+      this.router.navigate(['/login']);
+    }
   }
 
   loadTasks() {
-    this.todoService.getTodos().subscribe(
-      (data) => {
-        this.tasks = data;
-        this.applyFilter();
-      },
-      (error) => {
-        this.toastr.error('Error al cargar las tareas', error.message);
-      }
-    );
+    if (this.userId) {
+      this.todoService.getTodosByUserId(this.userId).subscribe(
+        (data) => {
+          this.tasks = data;
+          this.applyFilter();
+        },
+        (error) => {
+          this.toastr.error('Error al cargar las tareas', error.message);
+        }
+      );
+    }
   }
 
   openModal(task: Todo) {
@@ -69,8 +77,8 @@ export class TodoListComponent implements OnInit {
   }
 
   addTask() {
-    if (this.newTask.trim()) {
-      const newTodo: Todo = { name: this.newTask, completed: false, description: '' };
+    if (this.newTask.trim() && this.userId) {
+      const newTodo: Todo = { name: this.newTask, completed: false, description: '', userId: this.userId };
       this.todoService.createTodo(newTodo).subscribe(
         (response) => {
           const todo = response.todoItem;
