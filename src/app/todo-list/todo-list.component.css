@@ -145,24 +145,28 @@ select {
   position: fixed;
   top: 0;
   left: 0;
-  width: 100%;
-  height: 100%;
-  background: rgba(0, 0, 0, 0.5);
+  right: 0;
+  bottom: 0;
   display: flex;
-  align-items: center;
   justify-content: center;
+  align-items: center;
+  background-color: rgba(0, 0, 0, 0.5);
+  z-index: 1000;
 }
 
 .modal-content {
+  text-align: center;
   background: white;
-  padding: 20px;
+  padding: 70px;
   border-radius: 8px;
   max-width: 500px;
-  width: 100%;
+  width: 90%;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1); /* Sombra para el contenido del modal */
+  height: auto;
 }
 
 .show-modal {
-  display: block;
+  display: flex;
 }
 
 .delete {
@@ -170,8 +174,8 @@ select {
 }
 
 h3 {
-  text-align: left; 
-  margin: 10px auto; 
+  text-align: center; 
+  margin: 16px auto; 
   width: 90%; 
   padding-left: 10px; 
   color: #333;
@@ -188,4 +192,34 @@ h3 {
   .add-task input {
     width: 70%;
   }
+}
+
+.description {
+  width: 100%;
+  text-align: center;
+  padding: 10px;
+  border: 1px solid #ccc;
+  border-radius: 5px;
+  box-sizing: border-box;
+}
+
+.label-description {
+  text-align: center;
+  margin: 10px auto;
+}
+
+.label-nombre {
+  margin: 10px auto;
+  text-align: center;
+}
+
+.modal-actions {
+  display: flex;
+  justify-content: space-between; /* Espacio entre los botones */
+  gap: 15px; /* Espacio entre los botones (opcional) */
+}
+
+.error-message {
+  color: red; /* Color rojo para mensajes de error */
+  margin-top: 10px; /* Espacio encima del mensaje de error */
 }

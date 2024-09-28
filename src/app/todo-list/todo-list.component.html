@@ -42,10 +42,10 @@
 <div *ngIf="selectedTask" class="modal-container" [ngClass]="{'show-modal': selectedTask}">
   <div class="modal-content">
     <h3>Editar Tarea</h3>
-    <label>Nombre:</label>
+    <label class="label-nombre">Nombre:</label>
     <input type="text" [(ngModel)]="selectedTask.name" />
-    <label>Descripción:</label>
-    <textarea [(ngModel)]="selectedTask.description" placeholder="Agregar descripción"></textarea>
+    <label class="label-description">Descripción:</label>
+    <textarea class="description" [(ngModel)]="selectedTask.description" placeholder="Agregar descripción"></textarea>
     <div *ngIf="errorMessage" class="error-message">
       {{ errorMessage }}
     </div>
